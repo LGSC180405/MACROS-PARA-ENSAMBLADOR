@@ -46,13 +46,14 @@ PINTAR_PIXEL MACRO x, y, color, pag
     MOV BH, pag
     MOV CX, x
     MOV DX, y
+    INT 10h
     POP DX
     POP CX
     POP BX
     POP AX
 ENDM
 
-LIMPIA_TOTAL MACRO color
+LIMPIA_TOTAL13 MACRO color
     PUSH AX
     PUSH DX
     PUSH CX
@@ -76,7 +77,6 @@ LIMPIA_TOTAL MACRO color
 ENDM
 
 LEER_PIXEL MACRO x, y, pag, color
-    PUSH AX
     PUSH BX
     PUSH CX
     PUSH DX
@@ -86,17 +86,14 @@ LEER_PIXEL MACRO x, y, pag, color
     MOV DX, y
     MOV BH, pag
     INT 10h    
-    MOV color, AL 
+    ; color -> AL 
     POP DX
     POP CX
     POP BX
-    POP AX
 ENDM
 
 MODO_ACTUAL MACRO modo
-    PUSH AX
     MOV AH, 0F02h
     INT 10
-    MOV modo, AL
-    POP AX
+    ; modo -> AL
 ENDM

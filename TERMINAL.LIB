@@ -2,16 +2,14 @@
 
 SALIR MACRO
     MOV AH, 4Ch
-    MOV AL, 0Ah
+    MOV AL, 00h
     INT 21h
 ENDM
 
-LEE_CARACTER MACRO caracter
-    PUSH AX
+LEE_CARACTER MACRO
     MOV AH, 01h
     INT 21h
-    MOV caracter,AL
-    POP AX
+    ; caracter -> AL
 ENDM
 
 ESCRIBE_CARACTER MACRO caracter
@@ -24,18 +22,16 @@ ESCRIBE_CARACTER MACRO caracter
     POP AX
 ENDM
 
-LEE_CARACTER_SIN_MOSTRAR MACRO caracter
-    PUSH AX
+LEE_CARACTER_SIN_MOSTRAR MACRO
     MOV AH, 08h
     INT 21h
-    MOV caracter, AL
-    POP AX
+    ; caracter -> AL
 ENDM
 
 ESCRIBE_CADENA MACRO cadena
     PUSH AX
     PUSH DX
-    LEE DX, cadena
+    MOV DX, OFFSET cadena
     MOV AH, 09h
     INT 21h
     POP DX
@@ -53,16 +49,14 @@ LEER_BUFFER MACRO buffer
 ENDM
 
 ABRIR_ARCHIVO MACRO nombre, modo, id
-    PUSH AX
     PUSH DX
     MOV AH, 3Dh
     MOV DX, OFFSET nombre
     ;(00h) Solo lectura, (01h) Solo escritura, (02h) Lectura y escritura
     MOV AL, modo  
     INT 21h
-    MOV id, AX
     POP DX
-    POP AX
+    ; id -> AX,
 ENDM
 
 CERRAR_ARCHIVO MACRO id
@@ -107,30 +101,18 @@ ESCRIBIR_ARCHIVO MACRO id, cantidad, buffer
     PUSH AX
 ENDM
 
-FECHA_SISTEMA MACRO anio, mes, dia
+FECHA_SISTEMA MACRO
     PUSH AX
-    PUSH CX
-    PUSH DX
     MOV AH, 2Ah
     INT 21h
-    MOV anio, CX
-    MOV mes, DH
-    MOV dia, DL
-    PUSH DX
-    PUSH CX
     PUSH AX
+    ; Año -> CX, Mes -> DH, Día -> DL
 ENDM
 
-HORA_SISTEMA MACRO hora, minuto, segundo
+HORA_SISTEMA MACRO
     PUSH AX
-    PUSH CX
-    PUSH DX
     MOV AH, 2Ch
     INT 21h
-    MOV hora, CH
-    MOV minuto, CL
-    MOV segundo, DH
-    PUSH DX
-    PUSH CX
     PUSH AX
+    ; Hora -> CH, Minuto -> CL, Segundo -> DH
 ENDM
