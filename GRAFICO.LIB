@@ -1,0 +1,102 @@
+;Libreria del modo video
+
+MODO_VIDEO MACRO modo
+    PUSH AX
+    MOV AH, 0
+    MOV AL, modo
+    INT 10h
+    POP AX
+ENDM
+
+POSCICIONAR_CURSOR MACRO fila, columna, pag
+    PUSH AX
+    PUSH BX
+    PUSH DX
+    MOV AH, 02h
+    MOV BH, pag
+    MOV DH, fila
+    MOV DL, columna
+    INT 10h
+    PUSH DX
+    PUSH BX
+    PUSH AX
+ENDM
+
+ESCRIBIR_CARACTER_COLOR MACRO caracter, color, repeticion
+    PUSH AX
+    PUSH BX
+    PUSH CX
+    MOV AH, 09h
+    MOV AL, caracter
+    MOV BL, color
+    MOV CX, repeticion
+    INT 10h
+    POP CX
+    POP BX
+    POP AX
+ENDM
+
+PINTAR_PIXEL MACRO x, y, color, pag
+    PUSH AX
+    PUSH BX
+    PUSH CX
+    PUSH DX
+    MOV AH, 0Ch
+    MOV AL, color
+    MOV BH, pag
+    MOV CX, x
+    MOV DX, y
+    POP DX
+    POP CX
+    POP BX
+    POP AX
+ENDM
+
+LIMPIA_TOTAL MACRO color
+    PUSH AX
+    PUSH DX
+    PUSH CX
+    ; Establecer el segmento de memoria de video
+    MOV AX, 0A000h
+    MOV ES, AX
+    ; Configurar el registro de mapa de bits para seleccionar el plano 0
+    MOV DX, 3C4h        ; Puerto del registro de secuenciador
+    MOV AX, 0F02h       ; Seleccionar todos los planos
+    out dx, ax
+
+    ; Limpiar la memoria de video
+    XOR DI, DI          ; Offset inicial
+    MOV CX, 8000h       ; 32,768 palabras (64 KB)
+    MOV AX, color
+    
+    REP STOSW           ; Llenar la memoria con ceros
+    POP AX
+    POP DX
+    POP CX
+ENDM
+
+LEER_PIXEL MACRO x, y, pag, color
+    PUSH AX
+    PUSH BX
+    PUSH CX
+    PUSH DX
+    PUSH 
+    MOV AH, 0Dh
+    MOV CX, x
+    MOV DX, y
+    MOV BH, pag
+    INT 10h    
+    MOV color, AL 
+    POP DX
+    POP CX
+    POP BX
+    POP AX
+ENDM
+
+MODO_ACTUAL MACRO modo
+    PUSH AX
+    MOV AH, 0F02h
+    INT 10
+    MOV modo, AL
+    POP AX
+ENDM
